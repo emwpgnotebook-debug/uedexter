@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index - Cadastro e Busca de Alunos</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-hover: #1557b0;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #202124;
+            --text-secondary: #5f6368;
+            --border: #dadce0;
+            --success: #25d366;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        header {
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 2px solid var(--primary);
+        }
+        header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 2.2rem;
+        }
+        header p {
+            color: var(--text-secondary);
+            margin: 5px 0 0 0;
+            font-size: 1rem;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            border: 1px solid var(--border);
+        }
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        input {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: var(--primary-hover);
+        }
+        .search-box {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            font-size: 1.1rem;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: #f1f3f4;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .btn-wpp {
+            background: var(--success);
+            color: white;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+        }
+        .btn-wpp:hover {
+            opacity: 0.9;
+        }
+        .no-results {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Index</h1>
+        <p>Sistema Simples de Cadastro e Consulta Escolar</p>
+    </header>
+
+    <div class="card">
+        <h2>📝 Cadastrar Novo Aluno</h2>
+        <form id="formEstudante">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nomeAluno">Nome do Aluno</label>
+                    <input type="text" id="nomeAluno" placeholder="Ex: João Silva" required>
+                </div>
+                <div class="form-group">
+                    <label for="turmaAluno">Turma</label>
+                    <input type="text" id="turmaAluno" placeholder="Ex: 1º Ano A" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nomeResponsavel">Nome do Responsável (Pai/Mãe)</label>
+                    <input type="text" id="nomeResponsavel" placeholder="Ex: Maria Silva" required>
+                </div>
+                <div class="form-group">
+                    <label for="telResponsavel">Telefone (DDD + Número)</label>
+                    <input type="tel" id="telResponsavel" placeholder="Ex: 11999999999" required>
+                </div>
+            </div>
+            <button type="submit" id="btnSalvar">Salvar no Banco de Dados</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>🔍 Buscar Estudante</h2>
+        <input type="text" id="inputBusca" class="search-box" placeholder="Digite o nome do aluno para buscar...">
+        
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome do Aluno</th>
+                        <th>Turma</th>
+                        <th>Responsável</th>
+                        <th>Contato dos Pais</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaResultados">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Suas credenciais do Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyChYwKIEPAiN_lZv527Uj3Fc4YBCOj5Mac",
+        authDomain: "uedexter-3d6e6.firebaseapp.com",
+        projectId: "uedexter-3d6e6",
+        storageBucket: "uedexter-3d6e6.firebasestorage.app",
+        messagingSenderId: "354916996793",
+        appId: "1:354916996793:web:d0b3aceb0de0cf4fe2ed68"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Memória local para filtrar os alunos sem gerar erros de index no Firebase
+    let listaAlunosCompleta = [];
+
+    // CADASTRO DE ALUNO E RESPONSÁVEL
+    const formEstudante = document.getElementById("formEstudante");
+    formEstudante.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const btn = document.getElementById("btnSalvar");
+        btn.innerText = "Salvando...";
+        btn.disabled = true;
+
+        // Remove tudo que não for número no telefone
+        const telefoneLimpo = document.getElementById("telResponsavel").value.replace(/\D/g, '');
+
+        try {
+            await addDoc(collection(db, "estudantes"), {
+                aluno: document.getElementById("nomeAluno").value,
+                turma: document.getElementById("turmaAluno").value,
+                responsavel: {
+                    nome: document.getElementById("nomeResponsavel").value,
+                    telefone: telefoneLimpo
+                },
+                criadoEm: new Date()
+            });
+            alert("Aluno e contato cadastrados com sucesso!");
+            formEstudante.reset();
+        } catch (error) {
+            console.error("Erro completo:", error);
+            alert("Erro ao salvar! Verifique suas Regras do Firestore. Detalhe: " + error.message);
+        } finally {
+            btn.innerText = "Salvar no Banco de Dados";
+            btn.disabled = false;
+        }
+    });
+
+    // ESCUTA EM TEMPO REAL E CARGA INICIAL
+    onSnapshot(query(collection(db, "estudantes"), orderBy("aluno", "asc")), (snapshot) => {
+        listaAlunosCompleta = [];
+        snapshot.forEach((doc) => {
+            const dados = doc.data();
+            listaAlunosCompleta.push(dados);
+        });
+        
+        // Atualiza a tabela com o termo que já estiver digitado ou tudo
+        filtrarEExibirAlunos(document.getElementById("inputBusca").value);
+    }, (error) => {
+        console.error("Erro ao carregar banco:", error);
+    });
+
+    // FUNÇÃO DE FILTRO E EXIBIÇÃO NA TABELA
+    function filtrarEExibirAlunos(termoBusca) {
+        const tabela = document.getElementById("tabelaResultados");
+        tabela.innerHTML = "";
+
+        const termo = termoBusca.trim().toLowerCase();
+
+        // Filtra os alunos baseado no que foi digitado
+        const alunosFiltrados = listaAlunosCompleta.filter(estudante => 
+            estudante.aluno.toLowerCase().includes(termo)
+        );
+
+        if (alunosFiltrados.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="4" class="no-results">Nenhum estudante encontrado com este nome.</td></tr>`;
+            return;
+        }
+
+        // Renderiza as linhas dos estudantes compatíveis
+        alunosFiltrados.forEach((dados) => {
+            const tel = dados.responsavel.telefone;
+            const linkWpp = `https://wa.me/55${tel}`;
+            
+            const linha = `
+                <tr>
+                    <td><b>${dados.aluno}</b></td>
+                    <td>${dados.turma}</td>
+                    <td>${dados.responsavel.nome}</td>
+                    <td>
+                        <a class="btn-wpp" href="${linkWpp}" target="_blank">
+                            💬 ${tel}
+                        </a>
+                    </td>
+                </tr>
+            `;
+            tabela.innerHTML += linha;
+        });
+    }
+
+    // MONITOR DE DIGITAÇÃO NO CAMPO DE BUSCA
+    document.getElementById("inputBusca").addEventListener("input", (e) => {
+        filtrarEExibirAlunos(e.target.value);
+    });
+</script>
+
+</body>
+</html>
